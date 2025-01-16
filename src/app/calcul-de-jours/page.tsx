@@ -1,3 +1,9 @@
+import DateRangePickerForm from "@/components/date-range-picker-form";
+
 export default function CalculDeJours() {
-  return <div>Calcul de jours</div>;
+  return (
+    <>
+      <DateRangePickerForm />
+    </>
+  );
 }

@@ -31,7 +31,7 @@ export function Wrapper({ children }) {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbPage>
+                    <BreadcrumbPage className="font-bold">
                       {useCorrentPageTitle(currentPath)}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
@@ -42,7 +42,6 @@ export function Wrapper({ children }) {
           <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
         </SidebarInset>
       </SidebarProvider>
-      {children}
     </>
   );
 }
