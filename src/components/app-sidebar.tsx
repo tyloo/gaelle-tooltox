@@ -42,6 +42,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const currentPath = usePathname();
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -74,8 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {item.items?.length ? (
                   <SidebarMenuSub>
                     {item.items.map((item) => {
-                      const pathname = usePathname();
-                      const isActive = item.url === pathname;
+                      const isActive = item.url === currentPath;
 
                       return (
                         <SidebarMenuSubItem key={item.title}>
