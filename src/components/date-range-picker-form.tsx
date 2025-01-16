@@ -35,8 +35,8 @@ import { CopyButton } from "@/components/copy-button";
 
 const formSchema = z.object({
   dateRange: z.object({
-    from: z.date().optional(),
-    to: z.date().optional(),
+    from: z.date(),
+    to: z.date(),
   }),
 });
 
