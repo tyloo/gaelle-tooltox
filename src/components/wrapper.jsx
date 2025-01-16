@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { useCorrentPageTitle } from "@/lib/tools";
+import { currentPageTitle } from "@/lib/utils";
 
 export function Wrapper({ children }) {
   const currentPath = usePathname();
@@ -32,7 +32,7 @@ export function Wrapper({ children }) {
                 <BreadcrumbList>
                   <BreadcrumbItem>
                     <BreadcrumbPage className="font-bold">
-                      {useCorrentPageTitle(currentPath)}
+                      {currentPageTitle(currentPath)}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>

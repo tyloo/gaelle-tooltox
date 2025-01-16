@@ -18,11 +18,11 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { tools } from "@/lib/tools";
+import { tools } from "@/lib/utils";
 
 const links = [
   {
-    title: "Outils",
+    name: "Outils",
     url: "#",
     items: tools,
   },
@@ -54,10 +54,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarMenu>
             {links.map((item) => (
-              <SidebarMenuItem key={item.title}>
+              <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
                   <Link href={item.url} className="font-medium">
-                    {item.title}
+                    {item.name}
                   </Link>
                 </SidebarMenuButton>
                 {item.items?.length ? (
@@ -66,13 +66,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       const isActive = item.url === currentPath;
 
                       return (
-                        <SidebarMenuSubItem key={item.title}>
+                        <SidebarMenuSubItem key={item.name}>
                           <SidebarMenuSubButton asChild isActive={isActive}>
                             <Link
                               href={item.url}
                               className={isActive ? "font-bold" : ""}
                             >
-                              {item.title}
+                              {item.name}
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
