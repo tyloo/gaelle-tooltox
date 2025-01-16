@@ -18,28 +18,15 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { tools } from "@/lib/tools";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Outils",
-      url: "#",
-      items: [
-        {
-          title: "Calcul de jours",
-          url: "/calcul-de-jours",
-          isActive: true,
-        },
-        {
-          title: "Calcul de TVA",
-          url: "/calcul-de-tva",
-          isActive: false,
-        },
-      ],
-    },
-  ],
-};
+const links = [
+  {
+    title: "Outils",
+    url: "#",
+    items: tools,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentPath = usePathname();
@@ -66,7 +53,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item) => (
+            {links.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <Link href={item.url} className="font-medium">
