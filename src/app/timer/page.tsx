@@ -231,7 +231,17 @@ export default function Timer() {
                         >
                           <div className="space-y-1">
                             <p className="text-muted-foreground">
+                              {session.startTime.toLocaleDateString("fr-FR", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              })}{" "}
                               {session.startTime.toLocaleTimeString("fr-FR")} -{" "}
+                              {session.endTime.toLocaleDateString("fr-FR", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              })}{" "}
                               {session.endTime.toLocaleTimeString("fr-FR")}
                             </p>
                             <p>{formatTime(session.duration)}</p>
