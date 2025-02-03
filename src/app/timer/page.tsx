@@ -31,11 +31,13 @@ export default function Timer() {
   useEffect(() => {
     const savedSessions = localStorage.getItem("timerSessions");
     if (savedSessions) {
-      const parsedSessions = JSON.parse(savedSessions).map((session: any) => ({
-        ...session,
-        startTime: new Date(session.startTime),
-        endTime: new Date(session.endTime),
-      }));
+      const parsedSessions = JSON.parse(savedSessions).map(
+        (session: Session) => ({
+          ...session,
+          startTime: new Date(session.startTime),
+          endTime: new Date(session.endTime),
+        })
+      );
       setSessions(parsedSessions);
     }
   }, []);
