@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { TimerPDF } from "@/components/timer-pdf";
 import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type TimerType = "admin" | "compta" | "factures";
 
@@ -103,7 +104,7 @@ export default function Timer() {
       };
       setSessions((prev) => [newSession, ...prev]);
       setStartTime(null);
-      setTime(0); // Reset the timer when stopping
+      setTime(0);
     }
   };
 
@@ -130,17 +131,17 @@ export default function Timer() {
   }, {} as Record<TimerType, { sessions: Session[]; totalDuration: number }>);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 p-8">
-      <div className="flex flex-col items-center gap-4">
-        <h1 className="text-2xl font-bold">Timer</h1>
+    <Card className="border-none shadow-none">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 pb-4">
+        <CardTitle className="text-2xl font-bold">Timer</CardTitle>
         <Select
           value={timerType}
           onValueChange={(value: TimerType) => setTimerType(value)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[140px]">
             <SelectValue
               placeholder="Select timer type"
-              className={cn("text-4xl font-mono", {
+              className={cn("font-mono", {
                 "text-emerald-600": timerType === "admin",
                 "text-blue-600": timerType === "compta",
                 "text-purple-600": timerType === "factures",
@@ -168,91 +169,90 @@ export default function Timer() {
             </SelectItem>
           </SelectContent>
         </Select>
-      </div>
-      <div className="text-4xl font-mono">{formatTime(time)}</div>
-      <div className="flex gap-4">
-        <Button
-          variant={isRunning ? "secondary" : "default"}
-          onClick={handleStart}
-          disabled={isRunning}
-        >
-          Start
-        </Button>
-        <Button
-          variant={isRunning ? "default" : "secondary"}
-          onClick={handleStop}
-          disabled={!isRunning}
-        >
-          Stop
-        </Button>
-        <Button variant="destructive" onClick={handleReset}>
-          Reset
-        </Button>
-      </div>
-
-      {sessions.length > 0 && (
-        <div className="mt-8 w-full max-w-2xl">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Session History</h2>
-            <TimerPDF
-              groupedSessions={groupedSessions}
-              formatTime={formatTime}
-            />
-          </div>
-          <div className="space-y-6">
-            {Object.entries(groupedSessions).map(([type, group]) => (
-              <div
-                key={type}
-                className={cn("rounded-lg border p-4", {
-                  "border-emerald-200 bg-emerald-50/50": type === "admin",
-                  "border-blue-200 bg-blue-50/50": type === "compta",
-                  "border-purple-200 bg-purple-50/50": type === "factures",
-                })}
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <h3
-                    className={cn("text-lg font-semibold capitalize", {
-                      "text-emerald-600": type === "admin",
-                      "text-blue-600": type === "compta",
-                      "text-purple-600": type === "factures",
-                    })}
-                  >
-                    {type}
-                  </h3>
-                  <p className="text-sm font-medium">
-                    Total: {formatTime(group.totalDuration)}
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {group.sessions.map((session) => (
-                    <div
-                      key={session.id}
-                      className="flex items-center justify-between rounded border border-muted bg-muted/10 p-3"
-                    >
-                      <div className="space-y-1">
-                        <p className="text-sm text-muted-foreground">
-                          {session.startTime.toLocaleTimeString("fr-FR")} -{" "}
-                          {session.endTime.toLocaleTimeString("fr-FR")}
-                        </p>
-                        <p className="text-sm">
-                          {formatTime(session.duration)}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveSession(session.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="mb-6 text-center">
+          <div className="text-4xl font-mono mb-4">{formatTime(time)}</div>
+          <div className="flex gap-2 justify-center">
+            <Button
+              variant={isRunning ? "secondary" : "default"}
+              onClick={handleStart}
+              disabled={isRunning}
+              size="sm"
+            >
+              Start
+            </Button>
+            <Button
+              variant={isRunning ? "default" : "secondary"}
+              onClick={handleStop}
+              disabled={!isRunning}
+              size="sm"
+            >
+              Stop
+            </Button>
+            <Button variant="destructive" onClick={handleReset} size="sm">
+              Reset
+            </Button>
           </div>
         </div>
-      )}
-    </div>
+
+        {sessions.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Session History</h3>
+              <TimerPDF
+                groupedSessions={groupedSessions}
+                formatTime={formatTime}
+              />
+            </div>
+            <div className="space-y-4">
+              {Object.entries(groupedSessions).map(([type, group]) => (
+                <Card key={type} className="rounded-md shadow-sm">
+                  <CardContent className="pt-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <h4
+                        className={cn("font-semibold capitalize", {
+                          "text-emerald-600": type === "admin",
+                          "text-blue-600": type === "compta",
+                          "text-purple-600": type === "factures",
+                        })}
+                      >
+                        {type}
+                      </h4>
+                      <p className="text-sm font-medium">
+                        Total: {formatTime(group.totalDuration)}
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      {group.sessions.map((session) => (
+                        <div
+                          key={session.id}
+                          className="flex items-center justify-between rounded border border-muted bg-muted/10 p-2 text-sm"
+                        >
+                          <div className="space-y-1">
+                            <p className="text-muted-foreground">
+                              {session.startTime.toLocaleTimeString("fr-FR")} -{" "}
+                              {session.endTime.toLocaleTimeString("fr-FR")}
+                            </p>
+                            <p>{formatTime(session.duration)}</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveSession(session.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
