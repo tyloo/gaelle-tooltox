@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const tools = [
   { name: "Calcul de jours", url: "/calcul-de-jours" },
-  { name: "Calcul de TVA", url: "/calcul-de-tva" },
+  { name: "Timer", url: "/timer" },
 ];
 
 export function getToolByUrl(url: string) {
