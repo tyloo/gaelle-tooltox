@@ -22,6 +22,10 @@ import { tools } from "@/lib/utils";
 
 const links = [
   {
+    name: "Home",
+    url: "/",
+  },
+  {
     name: "Outils",
     url: "#",
     items: tools,

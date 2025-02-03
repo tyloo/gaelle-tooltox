@@ -36,8 +36,8 @@ export function JokeCard() {
   }, []);
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3">
         <h3 className="font-bold text-lg">Blague du jour</h3>
         <Button
           variant="ghost"
@@ -48,9 +48,9 @@ export function JokeCard() {
           <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 pt-0">
         {joke ? (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <p className="text-lg">{joke.blague}</p>
             <div className="pt-2">
               <Button
@@ -61,14 +61,14 @@ export function JokeCard() {
                 {showAnswer ? "Cacher la réponse" : "Voir la réponse"}
               </Button>
               {showAnswer && (
-                <p className="mt-4 text-lg font-medium text-muted-foreground">
+                <p className="mt-2 text-lg font-medium text-muted-foreground">
                   {joke.reponse}
                 </p>
               )}
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center h-32">
+          <div className="flex items-center justify-center h-16">
             <p className="text-muted-foreground">Loading...</p>
           </div>
         )}
