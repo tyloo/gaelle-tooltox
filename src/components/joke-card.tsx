@@ -1,0 +1,78 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { Button } from "./ui/button";
+import { RefreshCw } from "lucide-react";
+
+type Joke = {
+  blague: string;
+  reponse: string;
+};
+
+export function JokeCard() {
+  const [joke, setJoke] = useState<Joke | null>(null);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchJoke = async () => {
+    try {
+      setIsLoading(true);
+      setShowAnswer(false);
+      const response = await fetch(
+        "https://blague-api.vercel.app/api?mode=limit"
+      );
+      const data = await response.json();
+      setJoke(data);
+    } catch (error) {
+      console.error("Error fetching joke:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJoke();
+  }, []);
+
+  return (
+    <Card className="w-full max-w-lg mx-auto">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <h3 className="font-bold text-lg">Blague du jour</h3>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={fetchJoke}
+          disabled={isLoading}
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+        </Button>
+      </CardHeader>
+      <CardContent>
+        {joke ? (
+          <div className="space-y-4">
+            <p className="text-lg">{joke.blague}</p>
+            <div className="pt-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowAnswer(!showAnswer)}
+                className="w-full"
+              >
+                {showAnswer ? "Cacher la réponse" : "Voir la réponse"}
+              </Button>
+              {showAnswer && (
+                <p className="mt-4 text-lg font-medium text-muted-foreground">
+                  {joke.reponse}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-32">
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
