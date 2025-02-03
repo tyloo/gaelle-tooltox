@@ -10,16 +10,7 @@ import {
 } from "@react-pdf/renderer";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-
-type TimerType = "admin" | "compta" | "factures";
-
-type Session = {
-  id: string;
-  type: TimerType;
-  startTime: Date;
-  endTime: Date;
-  duration: number;
-};
+import { Session, TimerType } from "@/lib/types";
 
 const styles = StyleSheet.create({
   page: {
@@ -175,14 +166,14 @@ const formatHoursAndQuarters = (timeInSeconds: number) => {
 
 const getPricePerHour = (type: TimerType) => {
   switch (type) {
-    case "admin":
-      return 25;
-    case "compta":
-      return 20;
-    case "factures":
+    case "gwen":
       return 22;
+    case "smartback":
+      return 25;
+    case "jb":
+      return 25;
     default:
-      return 0;
+      return 25;
   }
 };
 
@@ -208,7 +199,7 @@ const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
   });
 
   let subtotal = 0;
-  const VAT_RATE = 0.2; // 20% VAT
+  const VAT_RATE = 0; // 20% VAT
 
   return (
     <Document>
@@ -257,7 +248,7 @@ const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
             return (
               <View key={type} style={styles.section}>
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>{type}</Text>
+                  <Text style={styles.sectionTitle}>Administratif {type}</Text>
                   <Text style={styles.pricePerHour}>{pricePerHour}€ / h</Text>
                 </View>
                 <View style={styles.sessionItem}>
@@ -276,7 +267,7 @@ const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
             <Text style={styles.summaryValue}>{subtotal.toFixed(2)}€</Text>
           </View>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>TVA (20%)</Text>
+            <Text style={styles.summaryLabel}>TVA (0%)</Text>
             <Text style={styles.summaryValue}>
               {(subtotal * VAT_RATE).toFixed(2)}€
             </Text>

@@ -5,26 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TimerPDF } from "@/components/timer-pdf";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
-
-type TimerType = "admin" | "compta" | "factures";
-
-type Session = {
-  id: string;
-  type: TimerType;
-  startTime: Date;
-  endTime: Date;
-  duration: number;
-};
-
-interface SessionHistoryProps {
-  sessions: Session[];
-  groupedSessions: Record<
-    TimerType,
-    { sessions: Session[]; totalDuration: number }
-  >;
-  formatTime: (timeInSeconds: number) => string;
-  onRemoveSession: (sessionId: string) => void;
-}
+import { SessionHistoryProps } from "@/lib/types";
 
 export function SessionHistory({
   sessions,
@@ -37,7 +18,7 @@ export function SessionHistory({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Session History</h3>
+        <h3 className="text-lg font-semibold">Historique des sessions</h3>
         <TimerPDF groupedSessions={groupedSessions} formatTime={formatTime} />
       </div>
       <div className="space-y-4">
@@ -47,12 +28,12 @@ export function SessionHistory({
               <div className="mb-2 flex items-center justify-between">
                 <h4
                   className={cn("font-semibold capitalize", {
-                    "text-emerald-600": type === "admin",
-                    "text-blue-600": type === "compta",
-                    "text-purple-600": type === "factures",
+                    "text-emerald-600": type === "gwen",
+                    "text-blue-600": type === "smartback",
+                    "text-purple-600": type === "jb",
                   })}
                 >
-                  {type}
+                  Administratif {type}
                 </h4>
                 <p className="text-sm font-medium">
                   Total: {formatTime(group.totalDuration)}

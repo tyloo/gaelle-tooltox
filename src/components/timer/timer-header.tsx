@@ -7,15 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-type TimerType = "admin" | "compta" | "factures";
-
-interface TimerHeaderProps {
-  timerType: TimerType;
-  onTimerTypeChange: (value: TimerType) => void;
-}
+import { TimerHeaderProps } from "@/lib/types";
 
 export function TimerHeader({
   timerType,
@@ -25,34 +19,34 @@ export function TimerHeader({
     <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 pb-4">
       <CardTitle className="text-2xl font-bold">Timer</CardTitle>
       <Select value={timerType} onValueChange={onTimerTypeChange}>
-        <SelectTrigger className="w-[140px]">
+        <SelectTrigger className="w-[210px]">
           <SelectValue
             placeholder="Select timer type"
             className={cn("font-mono", {
-              "text-emerald-600": timerType === "admin",
-              "text-blue-600": timerType === "compta",
-              "text-purple-600": timerType === "factures",
+              "text-emerald-600": timerType === "gwen",
+              "text-blue-600": timerType === "smartback",
+              "text-purple-600": timerType === "jb",
             })}
           />
         </SelectTrigger>
         <SelectContent>
           <SelectItem
-            value="admin"
+            value="gwen"
             className="text-emerald-600 hover:text-emerald-600"
           >
-            Admin
+            Administratif Gwen
           </SelectItem>
           <SelectItem
-            value="compta"
+            value="smartback"
             className="text-blue-600 hover:text-blue-600"
           >
-            Compta
+            Administratif Smartback
           </SelectItem>
           <SelectItem
-            value="factures"
+            value="jb"
             className="text-purple-600 hover:text-purple-600"
           >
-            Factures
+            Administratif JB
           </SelectItem>
         </SelectContent>
       </Select>

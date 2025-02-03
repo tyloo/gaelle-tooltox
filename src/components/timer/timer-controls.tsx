@@ -1,15 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
-interface TimerControlsProps {
-  time: number;
-  isRunning: boolean;
-  formatTime: (timeInSeconds: number) => string;
-  onStart: () => void;
-  onStop: () => void;
-  onReset: () => void;
-}
+import { TimerControlsProps } from "@/lib/types";
 
 export function TimerControls({
   time,

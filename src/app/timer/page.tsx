@@ -5,21 +5,12 @@ import { Card } from "@/components/ui/card";
 import { TimerHeader } from "@/components/timer/timer-header";
 import { TimerControls } from "@/components/timer/timer-controls";
 import { SessionHistory } from "@/components/timer/session-history";
-
-type TimerType = "admin" | "compta" | "factures";
-
-type Session = {
-  id: string;
-  type: TimerType;
-  startTime: Date;
-  endTime: Date;
-  duration: number;
-};
+import { Session, TimerType } from "@/lib/types";
 
 export default function Timer() {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
-  const [timerType, setTimerType] = useState<TimerType>("admin");
+  const [timerType, setTimerType] = useState<TimerType>("gwen");
   const [sessions, setSessions] = useState<Session[]>([]);
   const [startTime, setStartTime] = useState<Date | null>(null);
 
