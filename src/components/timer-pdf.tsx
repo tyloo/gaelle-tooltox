@@ -23,28 +23,74 @@ type Session = {
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
+    fontFamily: "Helvetica",
+  },
+  header: {
+    marginBottom: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  companyInfo: {
+    flex: 1,
+  },
+  companyName: {
+    fontSize: 16,
+    color: "#333333",
+    fontWeight: "bold",
+  },
+  companyDetails: {
+    fontSize: 10,
+    color: "#666666",
+    marginTop: 4,
+  },
+  invoiceInfo: {
+    alignItems: "flex-end",
   },
   title: {
     fontSize: 24,
-    marginBottom: 20,
-    textAlign: "center",
+    marginBottom: 10,
+    color: "#333333",
+    textTransform: "uppercase",
+    fontWeight: "bold",
+  },
+  invoiceDetails: {
+    fontSize: 10,
+    color: "#666666",
+    marginTop: 4,
+  },
+  clientInfo: {
+    marginTop: 0,
+    marginBottom: 40,
+  },
+  clientTitle: {
+    fontSize: 12,
+    color: "#666666",
+    marginBottom: 8,
+  },
+  clientName: {
+    fontSize: 14,
+    color: "#333333",
+    fontWeight: "bold",
   },
   section: {
-    marginBottom: 20,
-    borderBottom: 1,
-    paddingBottom: 10,
+    marginBottom: 25,
+    borderBottom: "1 solid #CCCCCC",
+    paddingBottom: 15,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 15,
+    backgroundColor: "#F5F5F5",
+    padding: 10,
   },
   sectionTitle: {
-    fontSize: 18,
-    textTransform: "capitalize",
+    fontSize: 16,
+    textTransform: "uppercase",
     fontWeight: "bold",
+    color: "#333333",
   },
   pricePerHour: {
     fontSize: 14,
@@ -54,13 +100,54 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: "8 0",
   },
   text: {
     fontSize: 12,
+    color: "#444444",
   },
   total: {
     fontSize: 14,
     fontWeight: "bold",
+    color: "#333333",
+  },
+  summary: {
+    marginTop: 30,
+    alignItems: "flex-end",
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 8,
+  },
+  summaryLabel: {
+    fontSize: 12,
+    color: "#666666",
+    marginRight: 20,
+    width: 100,
+    textAlign: "right",
+  },
+  summaryValue: {
+    fontSize: 12,
+    color: "#333333",
+    width: 80,
+    textAlign: "right",
+  },
+  grandTotal: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333333",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 40,
+    left: 40,
+    right: 40,
+    fontSize: 10,
+    color: "#666666",
+    textAlign: "center",
+    borderTop: "1 solid #CCCCCC",
+    paddingTop: 20,
   },
 });
 
@@ -107,44 +194,113 @@ interface TimerPDFProps {
   formatTime: (timeInSeconds: number) => string;
 }
 
-const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <Text style={styles.title}>Timer Sessions Report</Text>
-      {Object.entries(groupedSessions)
-        .filter(([type, group]) => {
-          const roundedDuration = roundToQuarterHour(group.totalDuration);
-          const pricePerHour = getPricePerHour(type as TimerType);
-          const hours = roundedDuration / 3600;
-          const totalPrice = hours * pricePerHour;
-          return group.totalDuration > 0 && totalPrice > 0;
-        })
-        .map(([type, group]) => {
-          const roundedDuration = roundToQuarterHour(group.totalDuration);
-          const pricePerHour = getPricePerHour(type as TimerType);
-          const hours = roundedDuration / 3600;
-          const totalPrice = hours * pricePerHour;
+const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
+  const invoiceNumber = `INV-${new Date().getFullYear()}-${String(
+    new Date().getMonth() + 1
+  ).padStart(2, "0")}-${String(Math.floor(Math.random() * 1000)).padStart(
+    3,
+    "0"
+  )}`;
+  const invoiceDate = new Date().toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-          return (
-            <View key={type} style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{type}</Text>
-                <Text style={styles.pricePerHour}>{pricePerHour}€ / h</Text>
+  let subtotal = 0;
+  const VAT_RATE = 0.2; // 20% VAT
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.header}>
+          <View style={styles.companyInfo}>
+            <Text style={styles.companyName}>COQUARD GAELLE</Text>
+            <Text style={styles.companyDetails}>77630 ARBONNE-LA-FORÊT</Text>
+            <Text style={styles.companyDetails}>FRANCE</Text>
+            <Text style={styles.companyDetails}>
+              contact.gcoquard@gmail.com
+            </Text>
+          </View>
+          <View style={styles.invoiceInfo}>
+            <Text style={styles.title}>Facture</Text>
+            <Text style={styles.invoiceDetails}>N° {invoiceNumber}</Text>
+            <Text style={styles.invoiceDetails}>Date: {invoiceDate}</Text>
+          </View>
+        </View>
+
+        <View style={styles.clientInfo}>
+          <Text style={styles.clientTitle}>Facturer à:</Text>
+          <Text style={styles.clientName}>OPTIMIGROWTH</Text>
+          <Text style={styles.companyDetails}>
+            10 Rue DE L'ECOLE GRAND CERISEAUX
+          </Text>
+          <Text style={styles.companyDetails}>77460 SOUPPES-SUR-LOING</Text>
+          <Text style={styles.companyDetails}>SIRET : 98405510300019</Text>
+        </View>
+
+        {Object.entries(groupedSessions)
+          .filter(([type, group]) => {
+            const roundedDuration = roundToQuarterHour(group.totalDuration);
+            const pricePerHour = getPricePerHour(type as TimerType);
+            const hours = roundedDuration / 3600;
+            const totalPrice = hours * pricePerHour;
+            if (totalPrice > 0) subtotal += totalPrice;
+            return group.totalDuration > 0 && totalPrice > 0;
+          })
+          .map(([type, group]) => {
+            const roundedDuration = roundToQuarterHour(group.totalDuration);
+            const pricePerHour = getPricePerHour(type as TimerType);
+            const hours = roundedDuration / 3600;
+            const totalPrice = hours * pricePerHour;
+
+            return (
+              <View key={type} style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>{type}</Text>
+                  <Text style={styles.pricePerHour}>{pricePerHour}€ / h</Text>
+                </View>
+                <View style={styles.sessionItem}>
+                  <Text style={styles.text}>
+                    Durée: {formatHoursAndQuarters(roundedDuration)}
+                  </Text>
+                  <Text style={styles.total}>{totalPrice.toFixed(2)}€</Text>
+                </View>
               </View>
-              <View style={styles.sessionItem}>
-                <Text style={styles.text}>
-                  Duration: {formatHoursAndQuarters(roundedDuration)}
-                </Text>
-                <Text style={styles.total}>
-                  Total: {totalPrice.toFixed(2)}€
-                </Text>
-              </View>
-            </View>
-          );
-        })}
-    </Page>
-  </Document>
-);
+            );
+          })}
+
+        <View style={styles.summary}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Sous-total HT</Text>
+            <Text style={styles.summaryValue}>{subtotal.toFixed(2)}€</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>TVA (20%)</Text>
+            <Text style={styles.summaryValue}>
+              {(subtotal * VAT_RATE).toFixed(2)}€
+            </Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, styles.grandTotal]}>
+              Total TTC
+            </Text>
+            <Text style={[styles.summaryValue, styles.grandTotal]}>
+              {(subtotal * (1 + VAT_RATE)).toFixed(2)}€
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.footer}>
+          <Text>
+            Merci de votre confiance. Pour toute question, n'hésitez pas à nous
+            contacter.
+          </Text>
+        </View>
+      </Page>
+    </Document>
+  );
+};
 
 export const TimerPDF = ({ groupedSessions, formatTime }: TimerPDFProps) => (
   <PDFDownloadLink
