@@ -1,18 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { TimerPDF } from "@/components/timer-pdf";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { TimerHeader } from "@/components/timer/timer-header";
+import { TimerControls } from "@/components/timer/timer-controls";
+import { SessionHistory } from "@/components/timer/session-history";
 
 type TimerType = "admin" | "compta" | "factures";
 
@@ -132,137 +124,21 @@ export default function Timer() {
 
   return (
     <Card className="border-none shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 pb-4">
-        <CardTitle className="text-2xl font-bold">Timer</CardTitle>
-        <Select
-          value={timerType}
-          onValueChange={(value: TimerType) => setTimerType(value)}
-        >
-          <SelectTrigger className="w-[140px]">
-            <SelectValue
-              placeholder="Select timer type"
-              className={cn("font-mono", {
-                "text-emerald-600": timerType === "admin",
-                "text-blue-600": timerType === "compta",
-                "text-purple-600": timerType === "factures",
-              })}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem
-              value="admin"
-              className="text-emerald-600 hover:text-emerald-600"
-            >
-              Admin
-            </SelectItem>
-            <SelectItem
-              value="compta"
-              className="text-blue-600 hover:text-blue-600"
-            >
-              Compta
-            </SelectItem>
-            <SelectItem
-              value="factures"
-              className="text-purple-600 hover:text-purple-600"
-            >
-              Factures
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="mb-6 text-center">
-          <div className="text-4xl font-mono mb-4">{formatTime(time)}</div>
-          <div className="flex gap-2 justify-center">
-            <Button
-              variant={isRunning ? "secondary" : "default"}
-              onClick={handleStart}
-              disabled={isRunning}
-              size="sm"
-            >
-              Start
-            </Button>
-            <Button
-              variant={isRunning ? "default" : "secondary"}
-              onClick={handleStop}
-              disabled={!isRunning}
-              size="sm"
-            >
-              Stop
-            </Button>
-            <Button variant="destructive" onClick={handleReset} size="sm">
-              Reset
-            </Button>
-          </div>
-        </div>
-
-        {sessions.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Session History</h3>
-              <TimerPDF
-                groupedSessions={groupedSessions}
-                formatTime={formatTime}
-              />
-            </div>
-            <div className="space-y-4">
-              {Object.entries(groupedSessions).map(([type, group]) => (
-                <Card key={type} className="rounded-md shadow-sm">
-                  <CardContent className="pt-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <h4
-                        className={cn("font-semibold capitalize", {
-                          "text-emerald-600": type === "admin",
-                          "text-blue-600": type === "compta",
-                          "text-purple-600": type === "factures",
-                        })}
-                      >
-                        {type}
-                      </h4>
-                      <p className="text-sm font-medium">
-                        Total: {formatTime(group.totalDuration)}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      {group.sessions.map((session) => (
-                        <div
-                          key={session.id}
-                          className="flex items-center justify-between rounded border border-muted bg-muted/10 p-2 text-sm"
-                        >
-                          <div className="space-y-1">
-                            <p className="text-muted-foreground">
-                              {session.startTime.toLocaleDateString("fr-FR", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                              })}{" "}
-                              {session.startTime.toLocaleTimeString("fr-FR")} -{" "}
-                              {session.endTime.toLocaleDateString("fr-FR", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                              })}{" "}
-                              {session.endTime.toLocaleTimeString("fr-FR")}
-                            </p>
-                            <p>{formatTime(session.duration)}</p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveSession(session.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-      </CardContent>
+      <TimerHeader timerType={timerType} onTimerTypeChange={setTimerType} />
+      <TimerControls
+        time={time}
+        isRunning={isRunning}
+        formatTime={formatTime}
+        onStart={handleStart}
+        onStop={handleStop}
+        onReset={handleReset}
+      />
+      <SessionHistory
+        sessions={sessions}
+        groupedSessions={groupedSessions}
+        formatTime={formatTime}
+        onRemoveSession={handleRemoveSession}
+      />
     </Card>
   );
 }
