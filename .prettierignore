@@ -1,0 +1,15 @@
+# Ignore everything recursively
+*
+
+# But not the .json, .ts, .jsx, and .mjs files
+!*.json
+!*.ts
+!*.tsx
+!*.mjs
+
+# Ignore shadcn components and db migrations
+components/ui/*
+lib/db/migrations/**/*
+
+# Check subdirectories too
+!*/

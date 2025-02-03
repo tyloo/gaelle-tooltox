@@ -1,9 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["random.dog"],
-  },
-};
+    domains: ['random.dog']
+  }
+}
 
-export default nextConfig;
+export default nextConfig
