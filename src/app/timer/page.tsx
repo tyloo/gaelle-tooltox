@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from "react";
 import {
+  PDFDownloadLink,
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+} from "@react-pdf/renderer";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -9,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 
 type TimerType = "admin" | "compta" | "factures";
 
@@ -159,7 +167,25 @@ export default function Timer() {
 
       {sessions.length > 0 && (
         <div className="mt-8 w-full max-w-2xl">
-          <h2 className="mb-4 text-xl font-semibold">Session History</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Session History</h2>
+            <PDFDownloadLink
+              document={
+                <TimerPDF
+                  groupedSessions={groupedSessions}
+                  formatTime={formatTime}
+                />
+              }
+              fileName="timer-sessions.pdf"
+            >
+              {({ loading }) => (
+                <Button variant="outline" size="sm" disabled={loading}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Export PDF
+                </Button>
+              )}
+            </PDFDownloadLink>
+          </div>
           <div className="space-y-6">
             {Object.entries(groupedSessions).map(([type, group]) => (
               <div key={type} className="rounded-lg border p-4">
@@ -202,3 +228,67 @@ export default function Timer() {
     </div>
   );
 }
+
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+    textTransform: "capitalize",
+  },
+  sessionItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  text: {
+    fontSize: 12,
+  },
+  total: {
+    marginTop: 5,
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+});
+
+const roundToQuarterHour = (timeInSeconds: number) => {
+  const minutes = timeInSeconds / 60;
+  const roundedMinutes = Math.round(minutes / 15) * 15;
+  return roundedMinutes * 60;
+};
+
+const TimerPDF = ({
+  groupedSessions,
+  formatTime,
+}: {
+  groupedSessions: Record<
+    TimerType,
+    { sessions: Session[]; totalDuration: number }
+  >;
+  formatTime: (timeInSeconds: number) => string;
+}) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <Text style={styles.title}>Timer Sessions Report</Text>
+      {Object.entries(groupedSessions).map(([type, group]) => {
+        const roundedDuration = roundToQuarterHour(group.totalDuration);
+        return (
+          <View key={type} style={styles.sessionItem}>
+            <Text style={styles.sectionTitle}>{type}</Text>
+            <Text style={styles.total}>{formatTime(roundedDuration)}</Text>
+          </View>
+        );
+      })}
+    </Page>
+  </Document>
+);
