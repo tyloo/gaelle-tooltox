@@ -114,22 +114,24 @@ export default function Timer() {
   }, {} as Record<TimerType, { sessions: Session[]; totalDuration: number }>);
 
   return (
-    <Card className="border-none shadow-none">
-      <TimerHeader timerType={timerType} onTimerTypeChange={setTimerType} />
-      <TimerControls
-        time={time}
-        isRunning={isRunning}
-        formatTime={formatTime}
-        onStart={handleStart}
-        onStop={handleStop}
-        onReset={handleReset}
-      />
-      <SessionHistory
-        sessions={sessions}
-        groupedSessions={groupedSessions}
-        formatTime={formatTime}
-        onRemoveSession={handleRemoveSession}
-      />
-    </Card>
+    <div className="flex flex-col container gap-4 p-4">
+      <Card className="border-none shadow-none">
+        <TimerHeader timerType={timerType} onTimerTypeChange={setTimerType} />
+        <TimerControls
+          time={time}
+          isRunning={isRunning}
+          formatTime={formatTime}
+          onStart={handleStart}
+          onStop={handleStop}
+          onReset={handleReset}
+        />
+        <SessionHistory
+          sessions={sessions}
+          groupedSessions={groupedSessions}
+          formatTime={formatTime}
+          onRemoveSession={handleRemoveSession}
+        />
+      </Card>
+    </div>
   );
 }
