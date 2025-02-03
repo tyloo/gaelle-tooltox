@@ -224,7 +224,7 @@ const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
           <Text style={styles.clientTitle}>Facturer à:</Text>
           <Text style={styles.clientName}>OPTIMIGROWTH</Text>
           <Text style={styles.companyDetails}>
-            10 Rue DE L'ECOLE GRAND CERISEAUX
+            10 Rue DE L&apos;ECOLE GRAND CERISEAUX
           </Text>
           <Text style={styles.companyDetails}>77460 SOUPPES-SUR-LOING</Text>
           <Text style={styles.companyDetails}>SIRET : 98405510300019</Text>
@@ -284,8 +284,8 @@ const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => {
 
         <View style={styles.footer}>
           <Text>
-            Merci de votre confiance. Pour toute question, n'hésitez pas à nous
-            contacter.
+            Merci de votre confiance. Pour toute question, n&apos;hésitez pas à
+            nous contacter.
           </Text>
         </View>
       </Page>
