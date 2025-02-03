@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { TimerPDF } from "@/components/timer-pdf";
+import { cn } from "@/lib/utils";
 
 type TimerType = "admin" | "compta" | "factures";
 
@@ -137,12 +138,34 @@ export default function Timer() {
           onValueChange={(value: TimerType) => setTimerType(value)}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select timer type" />
+            <SelectValue
+              placeholder="Select timer type"
+              className={cn("text-4xl font-mono", {
+                "text-emerald-600": timerType === "admin",
+                "text-blue-600": timerType === "compta",
+                "text-purple-600": timerType === "factures",
+              })}
+            />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="admin">Admin</SelectItem>
-            <SelectItem value="compta">Compta</SelectItem>
-            <SelectItem value="factures">Factures</SelectItem>
+            <SelectItem
+              value="admin"
+              className="text-emerald-600 hover:text-emerald-600"
+            >
+              Admin
+            </SelectItem>
+            <SelectItem
+              value="compta"
+              className="text-blue-600 hover:text-blue-600"
+            >
+              Compta
+            </SelectItem>
+            <SelectItem
+              value="factures"
+              className="text-purple-600 hover:text-purple-600"
+            >
+              Factures
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -178,9 +201,24 @@ export default function Timer() {
           </div>
           <div className="space-y-6">
             {Object.entries(groupedSessions).map(([type, group]) => (
-              <div key={type} className="rounded-lg border p-4">
+              <div
+                key={type}
+                className={cn("rounded-lg border p-4", {
+                  "border-emerald-200 bg-emerald-50/50": type === "admin",
+                  "border-blue-200 bg-blue-50/50": type === "compta",
+                  "border-purple-200 bg-purple-50/50": type === "factures",
+                })}
+              >
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold capitalize">{type}</h3>
+                  <h3
+                    className={cn("text-lg font-semibold capitalize", {
+                      "text-emerald-600": type === "admin",
+                      "text-blue-600": type === "compta",
+                      "text-purple-600": type === "factures",
+                    })}
+                  >
+                    {type}
+                  </h3>
                   <p className="text-sm font-medium">
                     Total: {formatTime(group.totalDuration)}
                   </p>

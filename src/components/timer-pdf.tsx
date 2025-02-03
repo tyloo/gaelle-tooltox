@@ -107,31 +107,41 @@ interface TimerPDFProps {
   formatTime: (timeInSeconds: number) => string;
 }
 
-const TimerPDFContent = ({ groupedSessions, formatTime }: TimerPDFProps) => (
+const TimerPDFContent = ({ groupedSessions }: TimerPDFProps) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.title}>Timer Sessions Report</Text>
-      {Object.entries(groupedSessions).map(([type, group]) => {
-        const roundedDuration = roundToQuarterHour(group.totalDuration);
-        const pricePerHour = getPricePerHour(type as TimerType);
-        const hours = roundedDuration / 3600;
-        const totalPrice = hours * pricePerHour;
+      {Object.entries(groupedSessions)
+        .filter(([type, group]) => {
+          const roundedDuration = roundToQuarterHour(group.totalDuration);
+          const pricePerHour = getPricePerHour(type as TimerType);
+          const hours = roundedDuration / 3600;
+          const totalPrice = hours * pricePerHour;
+          return group.totalDuration > 0 && totalPrice > 0;
+        })
+        .map(([type, group]) => {
+          const roundedDuration = roundToQuarterHour(group.totalDuration);
+          const pricePerHour = getPricePerHour(type as TimerType);
+          const hours = roundedDuration / 3600;
+          const totalPrice = hours * pricePerHour;
 
-        return (
-          <View key={type} style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{type}</Text>
-              <Text style={styles.pricePerHour}>{pricePerHour}€ / h</Text>
+          return (
+            <View key={type} style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>{type}</Text>
+                <Text style={styles.pricePerHour}>{pricePerHour}€ / h</Text>
+              </View>
+              <View style={styles.sessionItem}>
+                <Text style={styles.text}>
+                  Duration: {formatHoursAndQuarters(roundedDuration)}
+                </Text>
+                <Text style={styles.total}>
+                  Total: {totalPrice.toFixed(2)}€
+                </Text>
+              </View>
             </View>
-            <View style={styles.sessionItem}>
-              <Text style={styles.text}>
-                Duration: {formatHoursAndQuarters(roundedDuration)}
-              </Text>
-              <Text style={styles.total}>Total: {totalPrice.toFixed(2)}€</Text>
-            </View>
-          </View>
-        );
-      })}
+          );
+        })}
     </Page>
   </Document>
 );
