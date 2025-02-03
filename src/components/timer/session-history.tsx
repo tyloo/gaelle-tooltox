@@ -42,7 +42,13 @@ export function SessionHistory({
       <div className="space-y-4">
         {Object.entries(groupedSessions).map(([type, group]) => (
           <Card key={type} className="rounded-md shadow-sm">
-            <CardContent className="pt-4">
+            <CardContent
+              className={cn("pt-4 rounded-sm border shadow-sm", {
+                "bg-emerald-50 border-emerald-600/30": type === "gwen",
+                "bg-blue-50 border-blue-600/30": type === "smartback",
+                "bg-purple-50 border-purple-600/30": type === "jb",
+              })}
+            >
               <div className="mb-2 flex items-center justify-between">
                 <h4
                   className={cn("font-semibold capitalize", {
@@ -61,31 +67,31 @@ export function SessionHistory({
                 {group.sessions.map((session) => (
                   <div
                     key={session.id}
-                    className="grid grid-cols-[1fr,auto] gap-8"
+                    className="grid grid-cols-[1fr,auto] gap-8 border py-2 px-4 text-md rounded-md"
                   >
-                    <div className="space-y-1">
-                      <p className="text-muted-foreground">
-                        {session.startTime.toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}{" "}
-                        {session.startTime.toLocaleTimeString("fr-FR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {session.endTime.toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}{" "}
-                        {session.endTime.toLocaleTimeString("fr-FR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                      <p>{formatTime(session.duration)}</p>
+                    <div className="flex items-center space-y-1">
+                      {session.startTime.toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}{" "}
+                      {session.startTime.toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      -{" "}
+                      {session.endTime.toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}{" "}
+                      {session.endTime.toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      <span className="text-muted-foreground ml-1">
+                        ({formatTime(session.duration)})
+                      </span>
                     </div>
                     <div className="flex items-center justify-end gap-2">
                       <Dialog
