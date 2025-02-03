@@ -29,6 +29,24 @@ export default function Timer() {
   const [startTime, setStartTime] = useState<Date | null>(null);
 
   useEffect(() => {
+    const savedSessions = localStorage.getItem("timerSessions");
+    if (savedSessions) {
+      const parsedSessions = JSON.parse(savedSessions).map((session: any) => ({
+        ...session,
+        startTime: new Date(session.startTime),
+        endTime: new Date(session.endTime),
+      }));
+      setSessions(parsedSessions);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sessions.length > 0) {
+      localStorage.setItem("timerSessions", JSON.stringify(sessions));
+    }
+  }, [sessions]);
+
+  useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
     if (isRunning) {
