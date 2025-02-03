@@ -4,19 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TimerPDF } from "@/components/timer-pdf";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { SessionHistoryProps } from "@/lib/types";
 import { useState } from "react";
 import { Session } from "@/lib/types";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { SessionForm } from "@/components/timer/session-form";
 
 export function SessionHistory({
   sessions,
@@ -25,11 +17,8 @@ export function SessionHistory({
   onRemoveSession,
 }: SessionHistoryProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<{
-    session: Session;
-    startTimeInput: string;
-    endTimeInput: string;
-  } | null>(null);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   if (sessions.length === 0) return null;
 
@@ -37,7 +26,27 @@ export function SessionHistory({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Historique des sessions</h3>
-        <TimerPDF groupedSessions={groupedSessions} formatTime={formatTime} />
+        <div className="flex items-center gap-2">
+          <SessionForm
+            isOpen={isAddDialogOpen}
+            onOpenChange={setIsAddDialogOpen}
+            onSubmit={(session) => {
+              const updatedSessions = [session, ...sessions];
+              localStorage.setItem(
+                "timerSessions",
+                JSON.stringify(updatedSessions)
+              );
+              window.location.reload();
+            }}
+            triggerButton={
+              <Button variant="outline" size="sm">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Session
+              </Button>
+            }
+          />
+          <TimerPDF groupedSessions={groupedSessions} formatTime={formatTime} />
+        </div>
       </div>
       <div className="space-y-4">
         {Object.entries(groupedSessions).map(([type, group]) => (
@@ -94,36 +103,32 @@ export function SessionHistory({
                       </span>
                     </div>
                     <div className="flex items-center justify-end gap-2">
-                      <Dialog
-                        open={isDialogOpen}
-                        onOpenChange={setIsDialogOpen}
-                      >
-                        <DialogTrigger asChild>
+                      <SessionForm
+                        isOpen={
+                          isDialogOpen && selectedSession?.id === session.id
+                        }
+                        onOpenChange={(open) => {
+                          setIsDialogOpen(open);
+                          if (!open) setSelectedSession(null);
+                        }}
+                        initialSession={selectedSession}
+                        onSubmit={(updatedSession) => {
+                          const updatedSessions = sessions.map((s) =>
+                            s.id === updatedSession.id ? updatedSession : s
+                          );
+                          localStorage.setItem(
+                            "timerSessions",
+                            JSON.stringify(updatedSessions)
+                          );
+                          window.location.reload();
+                        }}
+                        triggerButton={
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => {
-                              const startDate = new Date(session.startTime);
-                              const endDate = new Date(session.endTime);
-                              const startTimeInput = `${startDate
-                                .getHours()
-                                .toString()
-                                .padStart(2, "0")}:${startDate
-                                .getMinutes()
-                                .toString()
-                                .padStart(2, "0")}`;
-                              const endTimeInput = `${endDate
-                                .getHours()
-                                .toString()
-                                .padStart(2, "0")}:${endDate
-                                .getMinutes()
-                                .toString()
-                                .padStart(2, "0")}`;
-                              setSelectedSession({
-                                session,
-                                startTimeInput,
-                                endTimeInput,
-                              });
+                              setSelectedSession(session);
+                              setIsDialogOpen(true);
                             }}
                           >
                             <svg
@@ -142,215 +147,8 @@ export function SessionHistory({
                               <path d="m15 5 4 4" />
                             </svg>
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-[800px]">
-                          <DialogHeader>
-                            <DialogTitle>Edit Session Time</DialogTitle>
-                          </DialogHeader>
-                          {selectedSession && (
-                            <form
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                const startDate = new Date(
-                                  selectedSession.session.startTime
-                                );
-                                const endDate = new Date(
-                                  selectedSession.session.endTime
-                                );
-                                const [startHours, startMinutes] =
-                                  selectedSession.startTimeInput
-                                    .split(":")
-                                    .map(Number);
-                                const [endHours, endMinutes] =
-                                  selectedSession.endTimeInput
-                                    .split(":")
-                                    .map(Number);
-
-                                if (
-                                  !isNaN(startHours) &&
-                                  !isNaN(startMinutes) &&
-                                  startHours >= 0 &&
-                                  startHours < 24 &&
-                                  startMinutes >= 0 &&
-                                  startMinutes < 60
-                                ) {
-                                  const newStartDate = new Date(startDate);
-                                  newStartDate.setHours(
-                                    startHours,
-                                    startMinutes,
-                                    0,
-                                    0
-                                  );
-
-                                  if (
-                                    !isNaN(endHours) &&
-                                    !isNaN(endMinutes) &&
-                                    endHours >= 0 &&
-                                    endHours < 24 &&
-                                    endMinutes >= 0 &&
-                                    endMinutes < 60
-                                  ) {
-                                    const newEndDate = new Date(endDate);
-                                    newEndDate.setHours(
-                                      endHours,
-                                      endMinutes,
-                                      0,
-                                      0
-                                    );
-
-                                    if (newEndDate > newStartDate) {
-                                      const newDuration = Math.floor(
-                                        (newEndDate.getTime() -
-                                          newStartDate.getTime()) /
-                                          1000
-                                      );
-                                      const updatedSession = {
-                                        ...selectedSession.session,
-                                        startTime: newStartDate,
-                                        endTime: newEndDate,
-                                        duration: newDuration,
-                                      };
-                                      const updatedSessions = sessions.map(
-                                        (s) =>
-                                          s.id === selectedSession.session.id
-                                            ? updatedSession
-                                            : s
-                                      );
-                                      localStorage.setItem(
-                                        "timerSessions",
-                                        JSON.stringify(updatedSessions)
-                                      );
-                                      setIsDialogOpen(false);
-                                      window.location.reload();
-                                    } else {
-                                      alert(
-                                        "End time must be after start time"
-                                      );
-                                    }
-                                  } else {
-                                    alert("Invalid end time format");
-                                  }
-                                } else {
-                                  alert("Invalid start time format");
-                                }
-                              }}
-                              className="space-y-6"
-                            >
-                              <div className="flex gap-2">
-                                <div className="space-y-2">
-                                  <label
-                                    htmlFor="startTime"
-                                    className="text-sm font-medium"
-                                  >
-                                    Start Time
-                                  </label>
-                                  <div className="flex flex-col gap-2">
-                                    <Calendar
-                                      mode="single"
-                                      selected={
-                                        new Date(
-                                          selectedSession.session.startTime
-                                        )
-                                      }
-                                      onSelect={(date) => {
-                                        if (date) {
-                                          const newDate = new Date(date);
-                                          const [hours, minutes] =
-                                            selectedSession.startTimeInput
-                                              .split(":")
-                                              .map(Number);
-                                          newDate.setHours(
-                                            hours,
-                                            minutes,
-                                            0,
-                                            0
-                                          );
-                                          setSelectedSession({
-                                            ...selectedSession,
-                                            session: {
-                                              ...selectedSession.session,
-                                              startTime: newDate,
-                                            },
-                                          });
-                                        }
-                                      }}
-                                      className="rounded-md border"
-                                    />
-                                    <Input
-                                      id="startTime"
-                                      type="time"
-                                      value={selectedSession.startTimeInput}
-                                      onChange={(e) =>
-                                        setSelectedSession({
-                                          ...selectedSession,
-                                          startTimeInput: e.target.value,
-                                        })
-                                      }
-                                      className="w-full"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <label
-                                    htmlFor="endTime"
-                                    className="text-sm font-medium"
-                                  >
-                                    End Time
-                                  </label>
-                                  <div className="flex flex-col gap-2">
-                                    <Calendar
-                                      mode="single"
-                                      selected={
-                                        new Date(
-                                          selectedSession.session.endTime
-                                        )
-                                      }
-                                      onSelect={(date) => {
-                                        if (date) {
-                                          const newDate = new Date(date);
-                                          const [hours, minutes] =
-                                            selectedSession.endTimeInput
-                                              .split(":")
-                                              .map(Number);
-                                          newDate.setHours(
-                                            hours,
-                                            minutes,
-                                            59,
-                                            999
-                                          );
-                                          setSelectedSession({
-                                            ...selectedSession,
-                                            session: {
-                                              ...selectedSession.session,
-                                              endTime: newDate,
-                                            },
-                                          });
-                                        }
-                                      }}
-                                      className="rounded-md border"
-                                    />
-                                    <Input
-                                      id="endTime"
-                                      type="time"
-                                      value={selectedSession.endTimeInput}
-                                      onChange={(e) =>
-                                        setSelectedSession({
-                                          ...selectedSession,
-                                          endTimeInput: e.target.value,
-                                        })
-                                      }
-                                      className="w-full"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex justify-end">
-                                <Button type="submit">Save Changes</Button>
-                              </div>
-                            </form>
-                          )}
-                        </DialogContent>
-                      </Dialog>
+                        }
+                      />
                       <Button
                         variant="ghost"
                         size="icon"
