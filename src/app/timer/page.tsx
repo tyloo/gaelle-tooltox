@@ -77,9 +77,18 @@ export default function Timer() {
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
 
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    const parts = [];
+    if (hours > 0) {
+      parts.push(`${hours} heure${hours > 1 ? "s" : ""}`);
+    }
+    if (minutes > 0) {
+      parts.push(`${minutes} minute${minutes > 1 ? "s" : ""}`);
+    }
+    if (seconds > 0 || parts.length === 0) {
+      parts.push(`${seconds} seconde${seconds > 1 ? "s" : ""}`);
+    }
+
+    return parts.join(" et ");
   };
 
   const handleStart = () => {
@@ -203,8 +212,8 @@ export default function Timer() {
                     >
                       <div className="space-y-1">
                         <p className="text-sm text-muted-foreground">
-                          {session.startTime.toLocaleTimeString()} -{" "}
-                          {session.endTime.toLocaleTimeString()}
+                          {session.startTime.toLocaleTimeString("fr-FR")} -{" "}
+                          {session.endTime.toLocaleTimeString("fr-FR")}
                         </p>
                         <p className="text-sm">
                           {formatTime(session.duration)}
